@@ -339,12 +339,142 @@ def api_symptom_distribution():
 def api_reports():
     if not is_logged_in():
         return jsonify({"error": "unauthorized"}), 401
+
     q = Report.query.order_by(Report.created_at.desc())
+
+    # -----------------------------
+    # Area filter
+    # -----------------------------
     area_filter = request.args.get("area_id")
     if area_filter:
         q = q.filter(Report.area_id == int(area_filter))
+
+    # -----------------------------
+    # Exact date filter
+    # Example: 2026-09-18
+    # -----------------------------
+    date_filter = request.args.get("date")
+    if date_filter:
+        try:
+            selected_date = datetime.strptime(
+                date_filter, "%Y-%m-%d"
+            ).date()
+
+            q = q.filter(Report.onset_date == selected_date)
+        except ValueError:
+            pass
+
+    # -----------------------------
+    # Date range - FROM
+    # -----------------------------
+    date_from = request.args.get("date_from")
+    if date_from:
+        try:
+            start_date = datetime.strptime(
+                date_from, "%Y-%m-%d"
+            ).date()
+
+            q = q.filter(Report.onset_date >= start_date)
+        except ValueError:
+            pass
+
+    # -----------------------------
+    # Date range - TO
+    # -----------------------------
+    date_to = request.args.get("date_to")
+    if date_to:
+        try:
+            end_date = datetime.strptime(
+                date_to, "%Y-%m-%d"
+            ).date()
+
+            q = q.filter(Report.onset_date <= end_date)
+        except ValueError:
+            pass
+
+    # -----------------------------
+    # Month filter
+    # Example: 2026-09
+    # -----------------------------
+    month_filter = request.args.get("month")
+    if month_filter:
+        try:
+            month_start = datetime.strptime(
+                month_filter + "-01",
+                "%Y-%m-%d"
+            ).date()
+
+            if month_start.month == 12:
+                next_month = date(
+                    month_start.year + 1,
+                    1,
+                    1
+                )
+            else:
+                next_month = date(
+                    month_start.year,
+                    month_start.month + 1,
+                    1
+                )
+
+            q = q.filter(
+                Report.onset_date >= month_start,
+                Report.onset_date < next_month
+            )
+
+        except ValueError:
+            pass
+
+    # -----------------------------
+    # Reporter type
+    # Self / Health Worker
+    # -----------------------------
+    reporter_filter = request.args.get("reporter_type")
+    if reporter_filter:
+        q = q.filter(
+            Report.reporter_type == reporter_filter
+        )
+
+    # -----------------------------
+    # Severity
+    # Mild / Moderate / Severe
+    # -----------------------------
+    severity_filter = request.args.get("severity")
+    if severity_filter:
+        q = q.filter(
+            Report.severity == severity_filter
+        )
+
+    # -----------------------------
+    # Water source
+    # -----------------------------
+    water_source_filter = request.args.get("water_source")
+    if water_source_filter:
+        q = q.filter(
+            Report.water_source == water_source_filter
+        )
+
+    # -----------------------------
+    # Symptom
+    # Example: diarrhea
+    #
+    # symptoms are stored as:
+    # diarrhea,vomiting,dehydration
+    # -----------------------------
+    symptom_filter = request.args.get("symptom")
+    if symptom_filter:
+        q = q.filter(
+            Report.symptoms.like(
+                f"%{symptom_filter}%"
+            )
+        )
+
     reports = q.limit(300).all()
-    return jsonify([r.to_dict() for r in reports])
+
+    return jsonify([
+        r.to_dict()
+        for r in reports
+    ])
 
 
 @app.route("/api/water-source-breakdown")
