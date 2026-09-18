@@ -57,9 +57,68 @@
 
   <div class="panel">
     <div class="table-header">
-      <h2>Recent reports</h2>
-      <select id="areaFilter"><option value="">All areas</option></select>
+    <h2>Recent reports</h2>
+
+    <div class="report-filters">
+
+        <!-- Area -->
+        <select id="areaFilter">
+            <option value="">All areas</option>
+        </select>
+
+        <!-- Date -->
+        <input type="date" id="dateFilter">
+
+        <!-- Month -->
+        <input type="month" id="monthFilter">
+
+        <!-- Water source -->
+        <select id="waterSourceFilter">
+            <option value="">All water sources</option>
+            <option value="Borewell">Borewell</option>
+            <option value="Public tap">Public tap</option>
+            <option value="Open well">Open well</option>
+            <option value="Pond / lake">Pond / lake</option>
+            <option value="Water tanker">Water tanker</option>
+            <option value="Packaged / bottled">Packaged / bottled</option>
+            <option value="River">River</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <!-- Symptom -->
+        <select id="symptomFilter">
+            <option value="">All symptoms</option>
+            <option value="diarrhea">Diarrhea</option>
+            <option value="vomiting">Vomiting</option>
+            <option value="fever">Fever</option>
+            <option value="stomach_cramps">Stomach cramps</option>
+            <option value="dehydration">Dehydration</option>
+            <option value="nausea">Nausea</option>
+            <option value="jaundice">Jaundice</option>
+            <option value="bloody_stool">Blood in stool</option>
+        </select>
+
+        <!-- Severity -->
+        <select id="severityFilter">
+            <option value="">All severity</option>
+            <option value="Mild">Mild</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+        </select>
+
+        <!-- Reporter -->
+        <select id="reporterFilter">
+            <option value="">All reporters</option>
+            <option value="Self">Self</option>
+            <option value="Health Worker">Health Worker</option>
+        </select>
+
+        <button id="clearFilters" type="button">
+            Clear
+        </button>
+
     </div>
+</div>
     <div class="table-wrap">
       <table id="reportsTable">
         <thead>
