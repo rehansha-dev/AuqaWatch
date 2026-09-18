@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Report Symptoms — AquaWatch{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <span class="eyebrow">Community Health Reporting</span>
+    <h1>Help stop outbreaks before they spread</h1>
+    <p>Report water-borne illness symptoms in your area. Every report helps health
+       workers spot clusters early — often days before an outbreak would otherwise
+       be noticed.</p>
+    <div class="hero-stats">
+      <div><strong>2 min</strong><span>to report</span></div>
+      <div><strong>Anonymous</strong><span>option available</span></div>
+      <div><strong>Real-time</strong><span>outbreak detection</span></div>
+    </div>
+  </div>
+  <div class="hero-card">
+    <h3>⚠️ If symptoms are severe</h3>
+    <p>Seek medical attention immediately, especially for young children, older
+       adults, or signs of severe dehydration (sunken eyes, little/no urination,
+       extreme thirst). Keep drinking clean, safe water while you seek care.</p>
+  </div>
+</section>
+
+<section class="form-section">
+  <form action="{{ url_for('submit_report') }}" method="POST" class="report-form">
+    <h2>Report symptoms</h2>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="area_id">Village / Area <span class="req">*</span></label>
+        <select name="area_id" id="area_id" required>
+          <option value="" disabled selected>Select your area</option>
+          {% for a in areas %}
+          <option value="{{ a.id }}">{{ a.name }}{% if a.pincode %} — {{ a.pincode }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="reporter_type">Reporting as</label>
+        <select name="reporter_type" id="reporter_type">
+          <option value="Self">Myself / family member</option>
+          <option value="Health Worker">Health worker (on behalf of patient)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="reporter_name">Name <span class="optional">(optional)</span></label>
+        <input type="text" name="reporter_name" id="reporter_name" placeholder="Leave blank to stay anonymous">
+      </div>
+
+      <div class="field">
+        <label for="age">Age of affected person</label>
+        <input type="number" name="age" id="age" min="0" max="120" placeholder="e.g. 34">
+      </div>
+
+      <div class="field">
+        <label for="onset_date">When did symptoms start?</label>
+        <input type="date" name="onset_date" id="onset_date" value="{{ today }}" max="{{ today }}">
+      </div>
+
+      <div class="field">
+        <label for="water_source">Main drinking water source</label>
+        <select name="water_source" id="water_source">
+          {% for w in water_sources %}
+          <option value="{{ w }}">{{ w }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="severity">Severity</label>
+        <select name="severity" id="severity">
+          {% for s in severities %}
+          <option value="{{ s }}">{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Symptoms <span class="req">*</span></label>
+      <div class="symptom-grid">
+        {% for key, label, weight in symptoms %}
+        <label class="symptom-chip">
+          <input type="checkbox" name="symptoms" value="{{ key }}">
+          <span>{{ label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="notes">Additional notes <span class="optional">(optional)</span></label>
+      <textarea name="notes" id="notes" rows="2" placeholder="Anything else worth noting — e.g. others in your household affected"></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary">Submit report</button>
+    <p class="privacy-note">Your report is used only for public-health outbreak monitoring in your area.</p>
+  </form>
+</section>
+{% endblock %}

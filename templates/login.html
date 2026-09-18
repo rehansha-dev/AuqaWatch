@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Health Worker Login — AquaWatch{% endblock %}
+{% block content %}
+<section class="login-section">
+  <form method="POST" class="login-card">
+    <h2>Health worker / admin login</h2>
+    <p class="login-hint">Demo credentials: <code>admin</code> / <code>admin123</code></p>
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" required autofocus>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    <button type="submit" class="btn-primary">Log in</button>
+  </form>
+</section>
+{% endblock %}

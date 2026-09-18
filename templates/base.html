@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AquaWatch — Outbreak Early Warning{% endblock %}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-icon">💧</span>
+      <span>AquaWatch <span class="brand-sub">Early Warning</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Report Symptoms</a>
+      {% if is_logged_in %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="nav-btn">Log out</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn">Health Worker Login</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <p>AquaWatch — Community Water-Borne Illness &amp; Outbreak Early Warning · Built for Track 2: Social Impact</p>
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

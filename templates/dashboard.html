@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — AquaWatch{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<section class="dash">
+  <div class="dash-header">
+    <div>
+      <h1>Outbreak Early Warning Dashboard</h1>
+      <p class="dash-sub">Auto-refreshes every 30s · rolling 7-day window vs 30-day baseline per area</p>
+    </div>
+    <button id="refreshBtn" class="btn-secondary">↻ Refresh now</button>
+  </div>
+
+  <div class="stat-cards" id="statCards">
+    <div class="stat-card"><span class="stat-value" id="statTotal">—</span><span class="stat-label">Total reports</span></div>
+    <div class="stat-card"><span class="stat-value" id="statToday">—</span><span class="stat-label">Reports today</span></div>
+    <div class="stat-card"><span class="stat-value" id="statAreas">—</span><span class="stat-label">Areas monitored</span></div>
+    <div class="stat-card stat-card-alert"><span class="stat-value" id="statAlerts">—</span><span class="stat-label">Active alerts</span></div>
+    <div class="stat-card stat-card-watch"><span class="stat-value" id="statWatch">—</span><span class="stat-label">Areas on watch</span></div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="panel panel-map">
+      <h2>Risk map</h2>
+      <div id="map"></div>
+      <div class="legend">
+        <span><i class="dot dot-alert"></i> Outbreak alert</span>
+        <span><i class="dot dot-watch"></i> Watch</span>
+        <span><i class="dot dot-normal"></i> Normal</span>
+      </div>
+    </div>
+
+    <div class="panel panel-alerts">
+      <h2>Area status</h2>
+      <div id="alertList" class="alert-list"></div>
+    </div>
+  </div>
+
+  <div class="dash-grid dash-grid-charts">
+    <div class="panel">
+      <h2>Reports over time</h2>
+      <canvas id="timeseriesChart" height="220"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Symptom distribution</h2>
+      <canvas id="symptomChart" height="220"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Suspected water sources</h2>
+      <canvas id="sourceChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="table-header">
+      <h2>Recent reports</h2>
+      <select id="areaFilter"><option value="">All areas</option></select>
+    </div>
+    <div class="table-wrap">
+      <table id="reportsTable">
+        <thead>
+          <tr>
+            <th>Date</th><th>Area</th><th>Reporter</th><th>Age</th>
+            <th>Symptoms</th><th>Water source</th><th>Severity</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

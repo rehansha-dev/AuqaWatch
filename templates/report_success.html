@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Report received — AquaWatch{% endblock %}
+{% block content %}
+<section class="success-section">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h1>Thank you — your report was received</h1>
+    <p>This helps health workers spot patterns early. If symptoms worsen — especially
+       signs of severe dehydration — please seek medical care right away.</p>
+    <a href="{{ url_for('index') }}" class="btn-primary">Submit another report</a>
+  </div>
+</section>
+{% endblock %}
