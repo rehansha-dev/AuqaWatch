@@ -223,29 +223,46 @@ def submit_report():
         flash("Please choose your area/village.", "error")
         return redirect(url_for("index"))
 
-  symptoms_selected = form.getlist("symptoms")
+@app.route("/report", methods=["POST"])
+def submit_report():
+    form = request.form
+    area_id = form.get("area_id")
 
-custom_symptoms = form.get("custom_symptoms", "").strip()
+    if not area_id:
+        flash("Please choose your area/village.", "error")
+        return redirect(url_for("index"))
 
-if custom_symptoms:
-    custom_list = [
-        s.strip().lower()
-        for s in custom_symptoms.split(",")
-        if s.strip()
-    ]
-    symptoms_selected.extend(custom_list)
+    symptoms_selected = form.getlist("symptoms")
 
-onset_str = form.get("onset_date") or date.today().isoformat()
+    custom_symptoms = form.get("custom_symptoms", "").strip()
 
-try:
-    onset = datetime.strptime(onset_str, "%Y-%m-%d").date()
-except ValueError:
-    onset = date.today()
+    if custom_symptoms:
+        custom_list = [
+            s.strip().lower()
+            for s in custom_symptoms.split(",")
+            if s.strip()
+        ]
+        symptoms_selected.extend(custom_list)
+
     onset_str = form.get("onset_date") or date.today().isoformat()
+
     try:
         onset = datetime.strptime(onset_str, "%Y-%m-%d").date()
     except ValueError:
         onset = date.today()
+
+    report = Report(
+        area_id=int(area_id),
+        reporter_name=form.get("reporter_name") or None,
+        reporter_type=form.get("reporter_type") or "Self",
+        age=int(form["age"]) if form.get("age") else None,
+        symptoms=",".join(symptoms_selected),
+        water_source=form.get("water_source"),
+        severity=form.get("severity") or "Mild",
+        onset_date=onset,
+        notes=form.get("notes") or None
+    )
+ 
 
     report = Report(
         area_id=int(area_id),
