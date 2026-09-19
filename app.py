@@ -219,21 +219,15 @@ def index():
 def submit_report():
     form = request.form
     area_id = form.get("area_id")
-    if not area_id:
-        flash("Please choose your area/village.", "error")
-        return redirect(url_for("index"))
-
-@app.route("/report", methods=["POST"])
-def submit_report():
-    form = request.form
-    area_id = form.get("area_id")
 
     if not area_id:
         flash("Please choose your area/village.", "error")
         return redirect(url_for("index"))
 
+    # Get selected checkbox symptoms
     symptoms_selected = form.getlist("symptoms")
 
+    # Get manually entered symptoms
     custom_symptoms = form.get("custom_symptoms", "").strip()
 
     if custom_symptoms:
@@ -244,13 +238,18 @@ def submit_report():
         ]
         symptoms_selected.extend(custom_list)
 
+    # Parse symptom onset date
     onset_str = form.get("onset_date") or date.today().isoformat()
 
     try:
-        onset = datetime.strptime(onset_str, "%Y-%m-%d").date()
+        onset = datetime.strptime(
+            onset_str,
+            "%Y-%m-%d"
+        ).date()
     except ValueError:
         onset = date.today()
 
+    # Create report
     report = Report(
         area_id=int(area_id),
         reporter_name=form.get("reporter_name") or None,
@@ -262,25 +261,11 @@ def submit_report():
         onset_date=onset,
         notes=form.get("notes") or None
     )
- 
 
-    report = Report(
-        area_id=int(area_id),
-        reporter_name=form.get("reporter_name") or None,
-        reporter_type=form.get("reporter_type") or "Self",
-        age=int(form["age"]) if form.get("age") else None,
-        symptoms=",".join(symptoms_selected),
-        water_source=form.get("water_source"),
-        severity=form.get("severity") or "Mild",
-        onset_date=onset,
-        notes=form.get("notes") or None,
-    )
     db.session.add(report)
     db.session.commit()
-    return redirect(url_for("report_success"))
 
-
-@app.route("/report/success")
+    return redirect(url_for("report_success"))@app.route("/report/success")
 def report_success():
     return render_template("report_success.html")
 
