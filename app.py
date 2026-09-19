@@ -223,7 +223,24 @@ def submit_report():
         flash("Please choose your area/village.", "error")
         return redirect(url_for("index"))
 
-    symptoms_selected = form.getlist("symptoms")
+  symptoms_selected = form.getlist("symptoms")
+
+custom_symptoms = form.get("custom_symptoms", "").strip()
+
+if custom_symptoms:
+    custom_list = [
+        s.strip().lower()
+        for s in custom_symptoms.split(",")
+        if s.strip()
+    ]
+    symptoms_selected.extend(custom_list)
+
+onset_str = form.get("onset_date") or date.today().isoformat()
+
+try:
+    onset = datetime.strptime(onset_str, "%Y-%m-%d").date()
+except ValueError:
+    onset = date.today()
     onset_str = form.get("onset_date") or date.today().isoformat()
     try:
         onset = datetime.strptime(onset_str, "%Y-%m-%d").date()
